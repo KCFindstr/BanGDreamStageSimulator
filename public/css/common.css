@@ -1,0 +1,14 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#dpi {
+	height: 1in;
+	width: 1in;
+	left: 100%;
+	position: fixed;
+	top: 100%;
+}
