@@ -1,7 +1,7 @@
 import loader from './loader.js';
 
 let obj = {
-	liveId: 2,
+	liveId: 1,
 	songId: 1,
 	auto: false,
 	parent: 'game-main',
@@ -24,10 +24,10 @@ let obj = {
 		normal: 0,
 		se: 0,
 		line: 0,
+		speed: 10,
 		scale: 1.5
 	},
 	flickDistance: 1,
-	speed: 10,
 	NOTE: {
 		NORMAL: 0,
 		FLICK: 1,
@@ -43,7 +43,21 @@ let obj = {
 	WAIT: 1000,
 	MAXRANGE: 10000
 };
+
+function setProperty(key, value, def) {
+	if (value == undefined)
+		obj[key] = def;
+	else
+		obj[key] = value;
+}
+
 obj.centerX = obj.width / 2;
 obj.centerY = obj.height / 2;
+setProperty('liveId', parseInt(cookie.get('liveId')), 1);
+let userConfig = cookie.get('config');
+if (userConfig && userConfig.length) {
+	userConfig = JSON.parse(userConfig);
+	Object.assign(obj.noteStyle, userConfig);
+}
 
 export default obj;

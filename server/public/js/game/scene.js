@@ -12,7 +12,7 @@ export default {
 		// Init Chart
 		game.chart = this.cache.json.get('chart_data');
 		chartLoader(game.chart);
-		game.chart.range = config.MAXRANGE / config.speed;
+		game.chart.range = config.MAXRANGE / config.noteStyle.speed;
 		// tap sound
 		game.tapse = game.sound['se_tap'].play();
 		game.sound['se_tap'].stop(game.tapse);
