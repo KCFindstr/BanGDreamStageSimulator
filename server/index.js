@@ -19,3 +19,4 @@ app.get('/live/:id', (req, res) => {
 });
 
 app.listen(process.env.PORT || 8080);
+console.log('App started at port ' + (process.env.PORT || 8080));
