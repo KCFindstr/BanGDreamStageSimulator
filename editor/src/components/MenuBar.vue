@@ -2,7 +2,7 @@
   <v-toolbar-items class="menubar">
 		<FileMenu/>
 		<EditMenu v-if="cache.music"/>
-		<PlayMenu v-if="false"/>
+		<PlayMenu v-if="cache.music"/>
 		<ViewMenu v-if="cache.music"/>
   </v-toolbar-items>
 </template>

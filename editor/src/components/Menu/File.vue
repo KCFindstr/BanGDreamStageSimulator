@@ -128,7 +128,7 @@ export default {
 			if (this.chart) {
 				var reader = new FileReader();
 				
-				reader.onload = function(e) {
+				reader.onload = function() {
 					TrackEditor.loadChart(JSON.parse(reader.result));
 					Vue.nextTick(() => {
 						let html = document.documentElement;
@@ -143,7 +143,7 @@ export default {
 			if (this.music) {
 				var reader = new FileReader();
 				
-				reader.onload = (e) => {
+				reader.onload = () => {
 					let music = new Howl({
 						src: reader.result,
 						preload: true,

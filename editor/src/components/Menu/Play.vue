@@ -10,7 +10,7 @@
 			</v-btn>
 		</template>
 		<v-list dense>
-			<v-list-item @click="menu=0">
+			<v-list-item @click="startGame()">
 				<v-list-item-title>Play from beginning</v-list-item-title>
 			</v-list-item>
 			<v-list-item @click="menu=0" disabled>
@@ -19,7 +19,7 @@
 			<v-divider></v-divider>
 			<v-list-item>
         <v-list-item-action>
-					<v-checkbox></v-checkbox>
+					<v-checkbox v-model="editor.auto"></v-checkbox>
         </v-list-item-action>
 				<v-list-item-content>
 					<v-list-item-title>Auto</v-list-item-title>
@@ -31,6 +31,7 @@
 
 <script>
 import Data from '../Data';
+import Cache from '../Cache';
 
 export default {
 	components: {
@@ -38,7 +39,18 @@ export default {
 	data: () => ({
 		editor: Data.editor,
 		menu: 0
-	})
+	}),
+	methods: {
+		startGame: function() {
+			this.menu = 0;
+			if (Cache.music.playing()) {
+				Cache.music.pause();
+				Cache.playState = 0;
+			}
+			Cache.gamePlaying = true;
+			window.startGame();
+		}
+	}
 };
 </script>
 

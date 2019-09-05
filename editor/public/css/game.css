@@ -1,0 +1,12 @@
+#game-main {
+	margin-top: 50px;
+	height: calc(100vh - 50px);
+	width: 100%;
+	background-color: black;
+	overflow: hidden;
+	touch-action: none;
+}
+
+#game-main canvas {
+	box-shadow: 0 0 5px white;
+}

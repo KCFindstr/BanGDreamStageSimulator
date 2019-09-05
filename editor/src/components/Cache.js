@@ -8,5 +8,6 @@ export default {
 	timeline: [],
 	head: 0,
 	formattedTime: '--:--',
-	targetPosition: 0
+	targetPosition: 0,
+	gamePlaying: true
 }

@@ -4,20 +4,25 @@
 			<v-toolbar-title class="headline mr-3">
 				<span>BGDSS Editor</span>
 			</v-toolbar-title>
-      <MenuBar/>
+      <MenuBar v-if="!cache.gamePlaying"/>
 			<v-spacer></v-spacer>
 			<v-btn text href="https://github.com/KCFindstr" target="_blank">
 				<span class="mr-2">By KCFindstr</span>
 			</v-btn>
 		</v-app-bar>
 
-		<LeftBar v-if="cache.music"/>
+		<template v-if="!cache.gamePlaying">
+			<LeftBar v-if="cache.music"/>
 
-		<v-content v-if="cache.music">
-			<v-container>
-				<Editor/>
-			</v-container>
-		</v-content>
+			<v-content v-if="cache.music">
+				<v-container>
+					<Editor/>
+				</v-container>
+			</v-content>
+		</template>
+		<template v-else>
+			<div id="game-main"></div>
+		</template>
 	</v-app>
 </template>
 

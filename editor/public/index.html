@@ -3,18 +3,35 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1">
+    <!-- mobile meta -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- icon -->
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>BGDSS Editor</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
     <!-- howler.js -->
-    <script src="<%= BASE_URL %>js/howler.min.js"></script>
+    <script src="<%= BASE_URL %>js/lib/howler.min.js"></script>
+    <!-- phaser.js -->
+    <script src="<%= BASE_URL %>js/lib/phaser.min.js"></script>
+    <!-- cookie.js -->
+    <script src="<%= BASE_URL %>js/lib/cookie.min.js"></script>
+    <!-- css -->
+    <link rel="stylesheet" href="<%= BASE_URL %>css/common.css">
+    <link rel="stylesheet" href="<%= BASE_URL %>css/game.css">
+    <!-- js -->
+	  <script type="module" src="<%= BASE_URL %>js/index.js"></script>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but editor doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+    <div id="dpi"></div>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>

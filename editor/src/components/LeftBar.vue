@@ -98,7 +98,9 @@ function convertSecondsToTime(seconds) {
   let ret = '--:--';
   try {
     ret = new Date(seconds * 1000).toISOString().substr(14, 5);
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
   return ret;
 }
 
