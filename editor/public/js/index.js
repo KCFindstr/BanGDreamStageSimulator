@@ -7,13 +7,18 @@
 import game from './game/index.js';
 import config from './game/config.js';
 
-window.startGame = function() {
+window.BGDSS.startGame = function() {
 	if (game.engine) {
 		game.engine.destroy(true);
 	}
 	game.engine = new Phaser.Game(config);
 }
 
-document.onreadystatechange = () => {
-	window.startGame();
+window.BGDSS.endGame = function() {
+	if (game.engine) {
+		if (game.bgm) {
+			game.bgm.stop();
+		}
+		game.engine.destroy(true);
+	}
 }

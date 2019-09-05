@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar-items class="menubar">
+  <v-toolbar-items>
 		<FileMenu/>
 		<EditMenu v-if="cache.music"/>
 		<PlayMenu v-if="cache.music"/>

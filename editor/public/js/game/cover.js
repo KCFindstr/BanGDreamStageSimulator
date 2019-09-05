@@ -18,4 +18,10 @@ export default {
 			this.scene.start('s_game');
 		});
 	},
+	update: function() {
+		if (window.BGDSS.development) {
+			config.auto = window.BGDSS.auto;
+			this.scene.start('s_game');
+		}
+	}
 }

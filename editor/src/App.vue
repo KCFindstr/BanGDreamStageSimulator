@@ -5,6 +5,9 @@
 				<span>BGDSS Editor</span>
 			</v-toolbar-title>
       <MenuBar v-if="!cache.gamePlaying"/>
+			<v-toolbar-items v-else>
+				<v-btn text @click="returnFromGame()">Back</v-btn>
+			</v-toolbar-items>
 			<v-spacer></v-spacer>
 			<v-btn text href="https://github.com/KCFindstr" target="_blank">
 				<span class="mr-2">By KCFindstr</span>
@@ -46,6 +49,10 @@ export default {
 		cache: Cache
   }),
   methods: {
+		returnFromGame: function() {
+			window.BGDSS.endGame();
+			Cache.gamePlaying = false;
+		}
   }
 };
 

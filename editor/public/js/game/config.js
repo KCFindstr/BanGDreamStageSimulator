@@ -53,7 +53,13 @@ function setProperty(key, value, def) {
 
 obj.centerX = obj.width / 2;
 obj.centerY = obj.height / 2;
-setProperty('liveId', parseInt(cookie.get('liveId')), 1);
+
+if (window.BGDSS.development) {
+	obj.liveId = -1;
+} else {
+	setProperty('liveId', parseInt(cookie.get('liveId')), 1);
+}
+
 let userConfig = cookie.get('config');
 if (userConfig && userConfig.length) {
 	userConfig = JSON.parse(userConfig);

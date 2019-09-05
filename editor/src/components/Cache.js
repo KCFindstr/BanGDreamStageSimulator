@@ -9,5 +9,5 @@ export default {
 	head: 0,
 	formattedTime: '--:--',
 	targetPosition: 0,
-	gamePlaying: true
+	gamePlaying: false
 }

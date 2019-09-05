@@ -32,6 +32,20 @@
 <script>
 import Data from '../Data';
 import Cache from '../Cache';
+import Vue from 'vue';
+
+function startGameHelper() {
+	if (Cache.music.playing()) {
+		Cache.music.pause();
+		Cache.playState = 0;
+	}
+	Cache.gamePlaying = true;
+	window.BGDSS.chart = JSON.stringify(Data);
+	window.BGDSS.auto = Data.editor.auto;
+	Vue.nextTick(() => {
+		window.BGDSS.startGame();
+	});
+}
 
 export default {
 	components: {
@@ -43,12 +57,7 @@ export default {
 	methods: {
 		startGame: function() {
 			this.menu = 0;
-			if (Cache.music.playing()) {
-				Cache.music.pause();
-				Cache.playState = 0;
-			}
-			Cache.gamePlaying = true;
-			window.startGame();
+			startGameHelper();
 		}
 	}
 };
