@@ -18,7 +18,7 @@
 						min="100"
 						max="300"
 						step="10"
-						@blur.native="updateRowheight()"
+						@change="updateRowheight()"
 					></v-slider>
 				</v-list-item-content>
 			</v-list-item>
