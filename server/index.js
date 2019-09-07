@@ -12,6 +12,9 @@ app.use(cookieSetter);
 app.set('view engine', 'ejs');
 
 // Editor
+app.get('/', (req, res) => {
+	res.redirect('editor');
+});
 app.get('/editor', (req, res) => {
 	res.render('editor/index.ejs');
 });

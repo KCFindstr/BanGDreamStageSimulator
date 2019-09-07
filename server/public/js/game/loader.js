@@ -124,6 +124,17 @@ export default {
 			this.load.spritesheet(...desc);
 		}
 		// audio
+		if (window.BGDSS.music) {
+			let sound = new Howl({
+				src: window.BGDSS.music,
+				preload: true,
+				volume: 1,
+				html5: true,
+				onload: () => audioLoaded++,
+			});
+			game.sound.bgm = sound;
+			audioSet.pop();
+		}
 		for (let desc of audioSet) {
 			let sound = new Howl({
 				src: desc[1],

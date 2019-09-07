@@ -1,0 +1,16 @@
+body, html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+body {
+	position: relative;
+	background-color: black;
+}
+
+#game-main {
+	margin-top: 0 !important;
+}

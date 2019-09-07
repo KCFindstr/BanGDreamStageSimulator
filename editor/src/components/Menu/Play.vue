@@ -38,10 +38,8 @@ import Vue from 'vue';
 import GameSettings from './PlaySettings';
 
 function startGameHelper() {
-	if (Cache.music.playing()) {
-		Cache.music.pause();
-		Cache.playState = 0;
-	}
+	Cache.music.stop();
+	Cache.playState = 0;
 	Cache.gamePlaying = true;
 	window.BGDSS.chart = JSON.stringify(Data);
 	window.BGDSS.auto = Data.editor.auto;

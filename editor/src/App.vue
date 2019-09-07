@@ -1,6 +1,6 @@
 <template>
 	<v-app>
-		<v-app-bar app dense clipped-left class="appbar">
+		<v-app-bar app dense clipped-left class="appbar" @click="debug()">
 			<v-toolbar-title class="headline mr-3">
 				<span>BGDSS Editor</span>
 			</v-toolbar-title>
@@ -41,6 +41,9 @@ import Vue from 'vue';
 import removeAllSelection from './components/Helper/RemoveSelection';
 import syncScrollbar from './components/Helper/SyncScrollbar';
 
+// sync
+let html = document.scrollingElement;
+
 export default {
 	name: 'App',
 	components: {
@@ -59,18 +62,17 @@ export default {
 			Vue.nextTick(() => {
 				syncScrollbar(time / 1000);
 			});
+		},
+		debug: function() {
 		}
   }
 };
-
-// sync
-let html = document.documentElement;
 
 // sync music with scrollbar
 function syncMusic() {
 	Cache.music.pause();
 	Cache.playState = 1;
-	let pos = html.scrollHeight - html.offsetHeight - html.scrollTop;
+	let pos = html.scrollHeight - $(window).outerHeight() - html.scrollTop;
 	pos /= Data.editor.rowheight;
 	pos += 1;
 	let time = TrackEditor.getTimeInSeconds(pos) - Data.offset / 1000;
@@ -79,13 +81,16 @@ function syncMusic() {
 }
 
 setInterval(() => {
-	if (!Cache.music) return;
-	if (!Cache.music.playing()) return;
+	if (!Cache.music || !Cache.music.playing()) {
+		return;
+	}
 	syncScrollbar(Cache.music.seek());
-}, 15)
+});
 
-window.addEventListener('scroll', function() {
-	if (!Cache.music || Math.abs(html.scrollTop - Cache.targetPosition) <= 1) return;
+$(window).scroll(function(e) {
+	if (!Cache.music || Cache.music.playing()) {
+		return;
+	}
 	syncMusic();
 });
 
@@ -173,7 +178,8 @@ html, body {
 	height: 100%;
 	padding: 0;
 	margin: 0;
-  font-size: 20px !important;
+	font-size: 20px !important;
+	-webkit-overflow-scrolling: none;
 }
 * {
 	text-transform: none !important;

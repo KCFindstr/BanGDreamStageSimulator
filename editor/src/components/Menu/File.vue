@@ -93,6 +93,7 @@ import TrackEditor from '../Helper/Track';
 import Vue from 'vue';
 import { saveAs } from 'file-saver';
 import removeAllSelection from '../Helper/RemoveSelection';
+import Scroll from '../Helper/Scroll';
 
 export default {
 	components: {
@@ -133,8 +134,7 @@ export default {
 					removeAllSelection();
 					TrackEditor.loadChart(JSON.parse(reader.result));
 					Vue.nextTick(() => {
-						let html = document.documentElement;
-						html.scrollTop = html.scrollHeight - html.offsetHeight;
+						Scroll();
 					});
 				}
 				reader.readAsText(this.chart);
@@ -143,20 +143,27 @@ export default {
 		importMusicEnd: function() {
 			this.filedialog = false;
 			if (this.music) {
-				var reader = new FileReader();
+				let reader = new FileReader();
+				let format = null;
+				if (!this.music.type.startsWith('audio')) {
+					this.music = this.music.slice(0, this.music.size, "audio/mp3")
+				}
 				
 				reader.onload = () => {
+					window.BGDSS.music = reader.result;
 					let music = new Howl({
 						src: reader.result,
+						html5: true,
 						preload: true,
+						format: 'mp3',
 						onload: () => {
 							this.cache.music = music;
 							TrackEditor.updateBpm();
 							Vue.nextTick(() => {
-								let html = document.documentElement;
-								html.scrollTop = html.scrollHeight - html.offsetHeight;
+								Scroll();
 							});
-						}
+						},
+						onloaderror: console.log
 					});
 				}
 				reader.readAsDataURL(this.music);

@@ -1,6 +1,7 @@
 import Data from './Data';
 import Cache from './Cache';
 import TrackEditor from './Track';
+import Scroll from './Scroll';
 
 let flick = new Howl({
 	src: '/se/flick.wav',
@@ -10,7 +11,7 @@ let tap = new Howl({
 	src: '/se/perfect.wav',
 	preload: true
 });
-let html = document.documentElement;
+let html = document.scrollingElement;
 
 export default function(musictime) {
 	let pos = musictime + Data.offset / 1000;
@@ -26,6 +27,5 @@ export default function(musictime) {
 		Cache.head++;
 	}
 	let time = TrackEditor.getTimeBySeconds(pos) - 1;
-	Cache.targetPosition = html.scrollHeight - html.offsetHeight - time * Data.editor.rowheight;
-	html.scrollTop = Cache.targetPosition;
+	Scroll(html.scrollHeight - $(window).outerHeight() - time * Data.editor.rowheight);
 }

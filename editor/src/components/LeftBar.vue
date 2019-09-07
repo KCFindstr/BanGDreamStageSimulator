@@ -173,6 +173,6 @@ export default {
 }
 .note-icon > img {
 	width: 100%;
-  height: auto;
+  height: 32px;
 }
 </style>
