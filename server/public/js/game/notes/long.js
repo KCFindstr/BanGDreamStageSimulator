@@ -221,11 +221,14 @@ let updateDisplay = function (time, start, end) {
 			else if (note.tailtype == config.NOTE.FLICK) {
 				// flick tail
 				if (time >= note.endtime) {
-					this.tail.judged = {
-						x: this.judged.x,
-						y: this.judged.y,
-						t: time
-					};
+					let track = game.trackManager.getTrackByPosition(this.judged.x, this.judged.y);
+					if (track != -1 && Math.abs(note.endtrack - track) <= 1) {
+						this.tail.judged = {
+							x: this.judged.x,
+							y: this.judged.y,
+							t: time
+						};
+					}
 				}
 			}
 		}
