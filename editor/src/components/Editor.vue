@@ -11,26 +11,49 @@
 		</div>
 		<!-- notes -->
 		<div v-for="note in notes" :key="note.id">
-			<!-- tap -->
-			<div v-if="note.type === 0" class="note note-tap" :style="computeNotePosition(note)" @click="handleNoteMouseDown(note)">
-				<img :src="getFileByNoteType(0)"/>
-			</div>
-			<!-- flick -->
-			<div v-else-if="note.type === 1" class="note note-flick" :style="computeNotePosition(note)" @click="handleNoteMouseDown(note)">
-				<img :src="getFileByNoteType(1)"/>
+			<!-- tap / flick -->
+			<div v-if="note.type < 2" class="note"
+				:style="computeNotePosition(note)"
+				:class="{
+					'note-selected': cache.selectedNotes[note.id] ? true: false,
+					'note-tap': note.type === 1,
+					'note-flick': note.type === 2
+				}"
+				@click="handleNoteMouseDown(note)"
+				@contextmenu.prevent="removeNote(note)"
+				@dragover.prevent
+				@dragstart="dragNoteStart($event, note)"
+			>
+				<img :src="getFileByNoteType(note.type)"/>
 			</div>
 			<!-- hold -->
 			<div v-else-if="note.type === 2" class="note-hold">
 				<!-- head -->
-				<div class="note" :style="computeNotePosition(note)" @click="handleNoteMouseDown(note, 0)">
+				<div class="note"
+					:style="computeNotePosition(note)"
+					:class="{'note-selected': cache.selectedNotes[note.id] ? true: false}"
+					@click="handleNoteMouseDown(note, 0)"
+					@contextmenu.prevent="removeNote(note)"
+				>
 					<img :src="getFileByNoteType(note.headtype, true)"/>
 				</div>
 				<!-- body -->
-				<div class="long-note" :style="computeLongPosition(note)" @click="handleNoteMouseDown(note, 1)">
+				<div class="long-note"
+					:style="computeLongPosition(note)"
+					:class="{'note-selected': cache.selectedNotes[note.id] ? true: false}"
+					@click="handleNoteMouseDown(note, 1)"
+					@contextmenu.prevent="removeNote(note)"
+				>
 					<img :src="getFileByNoteType(-1)"/>
 				</div>
 				<!-- tail -->
-				<div class="note" v-if="note.tailtype != 2" :style="computeNotePosition(getEndNote(note))" @click="handleNoteMouseDown(note, 2)">
+				<div class="note"
+					v-if="note.tailtype != 2 && !(cache.noteHead && cache.noteHead.parent && cache.noteHead.parent.id == note.id)"
+					:style="computeNotePosition(getEndNote(note))"
+					:class="{'note-selected': cache.selectedNotes[note.id] ? true: false}"
+					@click="handleNoteMouseDown(note, 2)"
+					@contextmenu.prevent="removeNote(note)"
+				>
 					<img :src="getFileByNoteType(note.tailtype, true)"/>
 				</div>
 			</div>
@@ -51,6 +74,8 @@ import Data from './Data';
 import Cache from './Cache';
 import colors from 'vuetify/lib/util/colors';
 import TrackEditor from './Track';
+import Vue from 'vue';
+import removeAllSelection from './RemoveSelection';
 
 // concat hold notes
 function concatHoldNote(note, parent, pos) {
@@ -106,6 +131,34 @@ function concatHoldNote(note, parent, pos) {
 			time: note.time,
 			track: note.track,
 			type: 0,
+		}
+	}
+}
+
+// select a note
+function selectNote(note) {
+	if (Cache.noteHead) {
+		Cache.noteHead = null;
+	}
+	let noteList = [note];
+	let cur = note;
+	let map = Cache.noteMap;
+	// hold notes
+	while (cur.next) {
+		cur = map[cur.next];
+		noteList.push(cur);
+	}
+	cur = note;
+	while (cur.prev) {
+		cur = map[cur.prev];
+		noteList.push(cur);
+	}
+	// add / remove selection
+	for (cur of noteList) {
+		if (!Cache.selectedNotes[cur.id]) {
+			Vue.set(Cache.selectedNotes, cur.id, cur);
+		} else {
+			Vue.delete(Cache.selectedNotes, cur.id);
 		}
 	}
 }
@@ -174,25 +227,35 @@ export default {
 		getEndNote: function(note) {
 			return TrackEditor.getEndNote(note);
 		},
+		removeNote: function(note) {
+			TrackEditor.removeNote(note.id);
+		},
 		handleNoteMouseDown: function(note, pos) {
 			if (this.editor.tool == 3) {
-				TrackEditor.removeNote(note.id);
+				this.removeNote(note);
 				return;
 			}
-			if (this.editor.tool == 2 && pos != 1) {
-				concatHoldNote({
-					time: pos == 0 ? note.time : note.endtime,
-					track: pos == 0 ? note.track : note.endtrack,
-				}, note, pos);
+			if (this.editor.tool == 2) {
+				if (pos == 1 || pos == null) {
+					selectNote(note);
+				} else {
+					concatHoldNote({
+						time: pos == 0 ? note.time : note.endtime,
+						track: pos == 0 ? note.track : note.endtrack,
+					}, note, pos);
+				}
 				return;
 			}
-			if (this.editor.tool != 2 && pos == 2 && !note.next) {
+			if (pos == 2 && !note.next) {
 				note.tailtype = this.editor.tool;
+				return;
 			}
-			// nothing happens, may add drag functionality in the future
+			// select notes
+			selectNote(note);
 		},
 		handleBlockClick: function(event, section, k, track) {
-			if (this.editor.tool == 3) return;
+			if (removeAllSelection() || this.editor.tool == 3)
+				return;
 			k = this.editor.division - k;
 			section = this.editor.maxrow - section + 1;
 			track--;
@@ -216,6 +279,10 @@ export default {
 				TrackEditor.makeNote(note);
 				return;
 			}
+		},
+		// drag note event
+		dragNoteStart: function(event, note) {
+			console.log(event, note)
 		}
 	}
 };
@@ -277,7 +344,10 @@ export default {
 	min-height: 16px;
 }
 .note-head img {
-  filter: drop-shadow(0 0 5px green);
+  opacity: 0.6;
+}
+.note-selected {
+	filter: drop-shadow(0 0 5px black);
 }
 /* play line */
 .playline {

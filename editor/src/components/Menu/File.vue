@@ -92,6 +92,7 @@ import Cache from '../Cache';
 import TrackEditor from '../Track';
 import Vue from 'vue';
 import { saveAs } from 'file-saver';
+import removeAllSelection from '../RemoveSelection';
 
 export default {
 	components: {
@@ -129,6 +130,7 @@ export default {
 				var reader = new FileReader();
 				
 				reader.onload = function() {
+					removeAllSelection();
 					TrackEditor.loadChart(JSON.parse(reader.result));
 					Vue.nextTick(() => {
 						let html = document.documentElement;

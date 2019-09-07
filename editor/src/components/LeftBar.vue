@@ -9,7 +9,7 @@
 
     <v-list dense nav>
       <v-list-item-group v-model="editor.tool" mandatory>
-        <v-list-item link key="0">
+        <v-list-item link key="0" @click="changeTool(0)">
           <v-list-item-icon class="note-icon">
             <img src="img/note_normal.png" />
           </v-list-item-icon>
@@ -18,7 +18,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item link key="1">
+        <v-list-item link key="1" @click="changeTool(1)">
           <v-list-item-icon class="note-icon">
             <img src="img/note_flick.png" />
           </v-list-item-icon>
@@ -27,7 +27,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item link key="2">
+        <v-list-item link key="2" @click="changeTool(2)">
           <v-list-item-icon class="note-icon">
             <img src="img/note_long.png" />
           </v-list-item-icon>
@@ -36,7 +36,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item link key="3">
+        <v-list-item link key="3" @click="changeTool(3)">
           <v-list-item-icon class="note-icon">
             <v-icon>mdi-delete</v-icon>
           </v-list-item-icon>
@@ -93,13 +93,14 @@ import Data from './Data';
 import Cache from './Cache';
 import TrackEditor from './Track';
 import { setInterval } from 'timers';
+import removeAllSelection from './RemoveSelection';
 
 function convertSecondsToTime(seconds) {
   let ret = '--:--';
   try {
     ret = new Date(seconds * 1000).toISOString().substr(14, 5);
   } catch (e) {
-    console.log(e);
+    console.log(seconds, e);
   }
   return ret;
 }
@@ -154,6 +155,14 @@ export default {
     },
     musicPause: function() {
       this.cache.music.pause();
+    },
+    changeTool: function(tool) {
+      if (tool == 3) {
+        for (let id in Cache.selectedNotes) {
+          TrackEditor.removeNote(id);
+        }
+      }
+      removeAllSelection();
     }
   }
 };

@@ -37,6 +37,7 @@ import MenuBar from './components/MenuBar';
 import Editor from './components/Editor';
 import { setInterval } from 'timers';
 import TrackEditor from './components/Track';
+import Vue from 'vue';
 
 export default {
 	name: 'App',
@@ -50,8 +51,12 @@ export default {
   }),
   methods: {
 		returnFromGame: function() {
-			window.BGDSS.endGame();
+			let time = window.BGDSS.endGame();
 			Cache.gamePlaying = false;
+			Cache.music.seek(time / 1000);
+			Vue.nextTick(() => {
+				syncScrollBar(time / 1000);
+			});
 		}
   }
 };
@@ -67,10 +72,9 @@ let tap = new Howl({
 	preload: true
 });
 
-setInterval(() => {
-	if (!Cache.music) return;
-	if (!Cache.music.playing()) return;
-	let pos = Cache.music.seek() + Data.offset / 1000;
+// sync scroll bar with time
+function syncScrollBar(musictime) {
+	let pos = musictime + Data.offset / 1000;
 	let timeline = Cache.timeline;
 	while (Cache.head < timeline.length && pos >= timeline[Cache.head].time) {
 		if (Data.editor.soundeffect) {
@@ -85,10 +89,10 @@ setInterval(() => {
 	let time = TrackEditor.getTimeBySeconds(pos);
 	Cache.targetPosition = html.scrollHeight - html.offsetHeight - time * Data.editor.rowheight;
 	html.scrollTop = Cache.targetPosition;
-}, 15)
+}
 
-window.addEventListener('scroll', function(e) {
-	if (!Cache.music || Math.abs(html.scrollTop - Cache.targetPosition) <= 1) return;
+// sync music with scrollbar
+function syncMusic() {
 	Cache.music.pause();
 	Cache.playState = 1;
 	let pos = html.scrollHeight - html.offsetHeight - html.scrollTop;
@@ -97,6 +101,17 @@ window.addEventListener('scroll', function(e) {
 	let time = TrackEditor.getTimeInSeconds(pos) - Data.offset / 1000;
 	time = Math.max(0, time);
 	Cache.music.seek(time);
+}
+
+setInterval(() => {
+	if (!Cache.music) return;
+	if (!Cache.music.playing()) return;
+	syncScrollBar(Cache.music.seek());
+}, 15)
+
+window.addEventListener('scroll', function(e) {
+	if (!Cache.music || Math.abs(html.scrollTop - Cache.targetPosition) <= 1) return;
+	syncMusic();
 });
 
 </script>
@@ -116,8 +131,15 @@ html, body {
 :not(input):not(textarea)::after,
 :not(input):not(textarea)::before {
   -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
   user-select: none;
-  cursor: default;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
 }
 </style>
 

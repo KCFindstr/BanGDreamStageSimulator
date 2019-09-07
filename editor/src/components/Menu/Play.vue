@@ -13,7 +13,7 @@
 			<v-list-item @click="startGame()">
 				<v-list-item-title>Play from beginning</v-list-item-title>
 			</v-list-item>
-			<v-list-item @click="menu=0" disabled>
+			<v-list-item @click="startGame(cache.music.seek())">
 				<v-list-item-title>Play from current location</v-list-item-title>
 			</v-list-item>
 			<v-divider></v-divider>
@@ -43,6 +43,7 @@ function startGameHelper() {
 	window.BGDSS.chart = JSON.stringify(Data);
 	window.BGDSS.auto = Data.editor.auto;
 	Vue.nextTick(() => {
+		Cache.timeline = [];
 		window.BGDSS.startGame();
 	});
 }
@@ -52,10 +53,15 @@ export default {
 	},
 	data: () => ({
 		editor: Data.editor,
+		cache: Cache,
 		menu: 0
 	}),
 	methods: {
-		startGame: function() {
+		startGame: function(time) {
+			if (time == undefined) {
+				time = 0;
+			}
+			window.BGDSS.playLocation = time;
 			this.menu = 0;
 			startGameHelper();
 		}

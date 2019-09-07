@@ -12,7 +12,7 @@ let data =  {
 	"offset": 0,
 	"editor": {
 		rowheight: 240,
-		division: 12,
+		division: 4,
 		tool: 0,
 		maxrow: 200,
 		noteId: 1000,

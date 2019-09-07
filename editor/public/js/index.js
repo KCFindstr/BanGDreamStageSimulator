@@ -15,10 +15,20 @@ window.BGDSS.startGame = function() {
 }
 
 window.BGDSS.endGame = function() {
+	let ret = 0;
 	if (game.engine) {
+		if (game.trackManager) {
+			ret = game.trackManager.getPlayingPosition();
+			game.trackManager = null;
+		}
 		if (game.bgm) {
 			game.bgm.stop();
 		}
+		if (game.tapse) {
+			game.sound['se_tap'].stop(game.tapse);
+			game.tapse = null;
+		}
 		game.engine.destroy(true);
 	}
+	return ret;
 }

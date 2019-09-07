@@ -9,5 +9,6 @@ export default {
 	head: 0,
 	formattedTime: '--:--',
 	targetPosition: 0,
-	gamePlaying: false
+	gamePlaying: false,
+	selectedNotes: {}
 }
