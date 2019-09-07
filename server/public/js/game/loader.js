@@ -157,7 +157,8 @@ export default {
 		let canvasy = document.getElementById('game-main').offsetHeight;
 		let dx = dpix / canvasx * config.width;
 		let dy = dpiy / canvasy * config.height;
-		config.flickDistance = Math.sqrt(dx * dx + dy * dy) * 0.25;
+		config.flickDistance = Math.sqrt(dx * dx + dy * dy) * 2;
+		console.log(config.flickDistance);
 		// scenes
 		this.scene.add('s_game', gameScene);
 		this.scene.add('s_cover', coverScene);
