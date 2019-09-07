@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app permanent clipped class="navbar" width="200">
+  <v-navigation-drawer app permanent stateless clipped class="navbar" width="200">
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="title">编辑工具</v-list-item-title>
@@ -173,5 +173,6 @@ export default {
 }
 .note-icon > img {
 	width: 100%;
+  height: auto;
 }
 </style>
