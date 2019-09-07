@@ -25,7 +25,8 @@ let obj = {
 		se: 0,
 		line: 0,
 		speed: 10,
-		scale: 1.5
+		scale: 1.5,
+		simuhint: 5
 	},
 	flickDistance: 1,
 	NOTE: {
@@ -53,11 +54,21 @@ function setProperty(key, value, def) {
 
 obj.centerX = obj.width / 2;
 obj.centerY = obj.height / 2;
-setProperty('liveId', parseInt(cookie.get('liveId')), 1);
-let userConfig = cookie.get('config');
-if (userConfig && userConfig.length) {
-	userConfig = JSON.parse(userConfig);
-	Object.assign(obj.noteStyle, userConfig);
+
+if (window.BGDSS.development) {
+	obj.liveId = -1;
+} else {
+	setProperty('liveId', parseInt(cookie.get('liveId')), 1);
 }
+
+window.BGDSS.reloadConfig = () => {
+	let userConfig = cookie.get('config');
+	if (userConfig && userConfig.length) {
+		userConfig = JSON.parse(userConfig);
+		Object.assign(obj.noteStyle, userConfig);
+	}
+}
+
+window.BGDSS.reloadConfig();
 
 export default obj;

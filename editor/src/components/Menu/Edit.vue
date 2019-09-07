@@ -15,6 +15,15 @@
 			<v-list-item @click="openSettingDialog()">
 				<v-list-item-title>Settings</v-list-item-title>
 			</v-list-item>
+
+			<v-divider></v-divider>
+
+			<v-list-item @click="flipHorizontally()">
+				<v-list-item-title>Flip horizontally</v-list-item-title>
+			</v-list-item>
+			<v-list-item @click="openRangeSelectDialog()">
+				<v-list-item-title>Range select</v-list-item-title>
+			</v-list-item>
 		</v-list>
 		
 		<!-- BPM dialog -->
@@ -144,12 +153,112 @@
 			</v-card>
 		</v-dialog>
 		<!-- end of setting dialog -->
+
+		<!-- range select dialog -->
+		<v-dialog
+			v-model="rangedialog"
+			max-width="600"
+		>
+			<v-card>
+				<v-card-title class="headline">Range Selection</v-card-title>
+				<v-card-text>
+					<v-form v-model="rangevalid">
+						<v-container>
+							<v-row dense>
+								<v-col cols="2">
+									<v-subheader>Start</v-subheader>
+								</v-col>
+								<v-col cols="2">
+									<v-text-field
+										v-model.number="rangeStart[0]"
+										:rules="timeRule"
+										label="Bar"
+										hide-details
+										required
+									></v-text-field>
+								</v-col>
+								<v-col cols="1">
+									<v-text-field
+										v-model.number="rangeStart[1]"
+										:rules="positiveRule"
+										label="N"
+										hide-details
+										required
+									></v-text-field>
+								</v-col>
+								<v-col cols="1">
+									<v-text-field
+										v-model.number="rangeStart[2]"
+										:rules="timeRule"
+										label="D"
+										hide-details
+										required
+									></v-text-field>
+								</v-col>
+								<v-col cols="2">
+									<v-subheader>End</v-subheader>
+								</v-col>
+								<v-col cols="2">
+									<v-text-field
+										v-model.number="rangeEnd[0]"
+										:rules="timeRule"
+										label="Bar"
+										hide-details
+										required
+									></v-text-field>
+								</v-col>
+								<v-col cols="1">
+									<v-text-field
+										v-model.number="rangeEnd[1]"
+										:rules="positiveRule"
+										label="N"
+										hide-details
+										required
+									></v-text-field>
+								</v-col>
+								<v-col cols="1">
+									<v-text-field
+										v-model.number="rangeEnd[2]"
+										:rules="timeRule"
+										label="D"
+										hide-details
+										required
+									></v-text-field>
+								</v-col>
+							</v-row>
+						</v-container>
+					</v-form>
+				</v-card-text>
+				<v-card-actions>
+					<div class="flex-grow-1"></div>
+					<v-btn
+						color="red darken-1"
+						text
+						@click="rangedialog = false"
+					>
+						Cancel
+					</v-btn>
+					<v-btn
+						color="green darken-1"
+						text
+						@click="rangeSelectEnd()"
+						:disabled="!rangevalid"
+					>
+						Done
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+		<!-- end of range select dialog -->
 	</v-menu>
 </template>
 
 <script>
-import Data from '../Data';
-import TrackEditor from '../Track';
+import Data from '../Helper/Data';
+import Cache from '../Helper/Cache';
+import TrackEditor from '../Helper/Track';
+import removeAllSelection from '../Helper/RemoveSelection';
+import selectNote from '../Helper/SelectNote';
 
 export default {
 	components: {
@@ -158,8 +267,12 @@ export default {
 		editor: Data.editor,
 		bpmdialog: false,
 		settingdialog: false,
+		rangedialog: false,
 		bpmvalid: false,
+		rangevalid: false,
 		bpm: [],
+		rangeStart: [1, 0, 1],
+		rangeEnd: [1, 0, 1],
 		offset: Data.offset,
 		timeRule: [
 			val => (val == parseInt(val) && val >= 1) || 'X'
@@ -192,6 +305,10 @@ export default {
 			this.menu = false;
 			this.settingdialog = true;
 		},
+		openRangeSelectDialog: function() {
+			this.menu = false;
+			this.rangedialog = true;
+		},
 		saveBpm: function() {
 			this.bpmdialog = false;
 			Data.offset = this.offset;
@@ -207,6 +324,44 @@ export default {
 				value: bpm.value,
 				time: [bpm.time[0], bpm.time[1], bpm.time[2]]
 			})
+		},
+		flipHorizontally: function() {
+			for (let id in Cache.selectedNotes) {
+				let note = Cache.selectedNotes[id];
+				note.track = 6 - note.track;
+				if (note.endtrack != undefined) {
+					note.endtrack = 6 - note.endtrack;
+				}
+			}
+		},
+		rangeSelectEnd: function() {
+			let s = this.rangeStart;
+			let t = this.rangeEnd;
+			removeAllSelection();
+			let notesInRange = {};
+			for (let note of Data.notes) {
+				let ns = null, nt = null;
+				let cur = note;
+				while (cur.prev) {
+					cur = Cache.noteMap[cur.prev];
+				}
+				ns = cur.time;
+				cur = note;
+				while (cur.next) {
+					cur = Cache.noteMap[cur.next];
+				}
+				nt = cur.endtime || cur.time;
+				if (notesInRange[cur.id]) continue;
+				// Check
+				if (!TrackEditor.earlyThan(ns, s) && !TrackEditor.earlyThan(t, nt)) {
+					notesInRange[cur.id] = cur;
+				}
+			}
+			// Add notes
+			for (let id in notesInRange) {
+				selectNote(notesInRange[id]);
+			}
+			this.rangedialog = false;
 		}
 	}
 };

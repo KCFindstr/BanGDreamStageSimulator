@@ -1,5 +1,7 @@
 import Cache from './Cache';
 import Data from './Data';
+import Vue from 'vue';
+import syncScrollbar from './SyncScrollbar';
 
 class TrackEditor {
 
@@ -16,6 +18,9 @@ class TrackEditor {
 	}
 
 	static updateBpm(newbpm) {
+		if (Cache.music.playing()) {
+			Cache.music.pause();
+		}
 		if (newbpm) {
 			newbpm.sort((a, b) => this.getTime(a.time) - this.getTime(b.time));
 			Data.bpm.splice(0, Data.bpm.length);
@@ -41,6 +46,9 @@ class TrackEditor {
 		}
 		ans = parseInt(ans);
 		Data.editor.maxrow = ans;
+		Vue.nextTick(() => {
+			syncScrollbar(Cache.music.seek());
+		});
 	}
 
 	static init() {
@@ -152,16 +160,16 @@ class TrackEditor {
 	}
 
 	static getTimeBySeconds(seconds) {
-		let curt = 0;
+		let curt = 1;
 		for (let i=1; i<Data.bpm.length; i++) {
 			let bpm = Data.bpm[i];
-			let add = this.timeDiff(bpm.time, Data.bpm[i-1].time, Data.bpm[i-1].bpm);
+			let add = this.timeDiff(bpm.time, Data.bpm[i-1].time, Data.bpm[i-1].value);
 			if (add < seconds) {
 				seconds -= add;
 				curt = this.getTime(bpm.time);
 				continue;
 			}
-			curt += seconds / (60 / bpm.value);
+			curt += seconds / (60 / Data.bpm[i-1].value);
 			return curt;
 		}
 		let lastbpm = Data.bpm[Data.bpm.length - 1];

@@ -7,4 +7,28 @@
 import game from './game/index.js';
 import config from './game/config.js';
 
-game.engine = new Phaser.Game(config);
+window.BGDSS.startGame = function() {
+	if (game.engine) {
+		game.engine.destroy(true);
+	}
+	game.engine = new Phaser.Game(config);
+}
+
+window.BGDSS.endGame = function() {
+	let ret = 0;
+	if (game.engine) {
+		if (game.trackManager) {
+			ret = game.trackManager.getPlayingPosition();
+			game.trackManager = null;
+		}
+		if (game.bgm) {
+			game.bgm.stop();
+		}
+		if (game.tapse) {
+			game.sound['se_tap'].stop(game.tapse);
+			game.tapse = null;
+		}
+		game.engine.destroy(true);
+	}
+	return ret;
+}

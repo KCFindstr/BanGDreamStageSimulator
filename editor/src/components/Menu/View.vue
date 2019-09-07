@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import Data from '../Data';
+import Data from '../Helper/Data';
 
 export default {
 	components: {

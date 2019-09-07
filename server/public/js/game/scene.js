@@ -10,7 +10,10 @@ export default {
 	preload: function() {
 		game.scene = this;
 		// Init Chart
-		game.chart = this.cache.json.get('chart_data');
+		if (config.liveId != -1)
+			game.chart = this.cache.json.get('chart_data');
+		else
+			game.chart = JSON.parse(window.BGDSS.chart);
 		chartLoader(game.chart);
 		game.chart.range = config.MAXRANGE / config.noteStyle.speed;
 		// tap sound

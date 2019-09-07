@@ -16,23 +16,26 @@
 			<v-list-item @click="startGame(cache.music.seek())">
 				<v-list-item-title>Play from current location</v-list-item-title>
 			</v-list-item>
+
 			<v-divider></v-divider>
+
 			<v-list-item>
         <v-list-item-action>
 					<v-checkbox v-model="editor.auto"></v-checkbox>
         </v-list-item-action>
-				<v-list-item-content>
-					<v-list-item-title>Auto</v-list-item-title>
-				</v-list-item-content>
+				<v-list-item-title>Auto</v-list-item-title>
 			</v-list-item>
+
+			<GameSettings @click="menu = false"/>
 		</v-list>
 	</v-menu>
 </template>
 
 <script>
-import Data from '../Data';
-import Cache from '../Cache';
+import Data from '../Helper/Data';
+import Cache from '../Helper/Cache';
 import Vue from 'vue';
+import GameSettings from './PlaySettings';
 
 function startGameHelper() {
 	if (Cache.music.playing()) {
@@ -42,6 +45,7 @@ function startGameHelper() {
 	Cache.gamePlaying = true;
 	window.BGDSS.chart = JSON.stringify(Data);
 	window.BGDSS.auto = Data.editor.auto;
+	window.BGDSS.reloadConfig();
 	Vue.nextTick(() => {
 		Cache.timeline = [];
 		window.BGDSS.startGame();
@@ -50,6 +54,7 @@ function startGameHelper() {
 
 export default {
 	components: {
+		GameSettings
 	},
 	data: () => ({
 		editor: Data.editor,

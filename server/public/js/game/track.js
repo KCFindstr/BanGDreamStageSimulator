@@ -28,8 +28,26 @@ class TrackManager {
 			this.noteById[note.id] = note;
 		}
 		this.trackPosition = [];
-		for (let i=0; i<7; i++)
+		for (let i=0; i<7; i++) {
 			this.trackPosition.push(this.getTrackPosition(i, 0));
+		}
+		let loc = window.BGDSS.playLocation;
+		if (loc != undefined) {
+			let notes = game.chart.notes;
+			while (this.head < notes.length) {
+				let note = notes[this.head];
+				if (note.type === config.NOTE.SLIDE) {
+					if (note.endtime >= loc * 1000) {
+						break;
+					}
+				} else {
+					if (note.time >= loc * 1000) {
+						break;
+					}
+				}
+				this.head++;
+			}
+		}
 	}
 
 	playJudge(judge) {
@@ -129,7 +147,13 @@ class TrackManager {
 	getPlayingPosition() {
 		if (!this.hasStarted) {
 			if (this.target == undefined) {
-				this.target = this.scene.time.now + config.WAIT;
+				let loc = window.BGDSS.playLocation;
+				if (loc == undefined) {
+					this.target = this.scene.time.now + config.WAIT;
+				} else {
+					this.target = this.scene.time.now;
+					game.bgm.seek(loc);
+				}
 			}
 			let result = this.scene.time.now - this.target;
 			if (result >= 0) {
@@ -192,6 +216,8 @@ class TrackManager {
 			this.judge.update();
 		}
 		// Multi touch hint
+		if (!config.noteStyle.simuhint)
+			return;
 		let visible = {};
 		let timemap = {};
 		let addToMap = (t, x, y, id) => {
@@ -239,7 +265,7 @@ class TrackManager {
 			let line = this.lineMap[t];
 			let ratio = (y - tracky) / height;
 			line.setTo(minx, y, maxx, y);
-			line.setLineWidth(5 * config.noteStyle.scale * ratio);
+			line.setLineWidth(config.noteStyle.simuhint * config.noteStyle.scale * ratio);
 			line.ids = [minid, maxid];
 		}
 		for (let t in this.lineMap) {
@@ -250,6 +276,6 @@ class TrackManager {
 			}
 		}
 	}
-};
+}
 
 export default TrackManager;

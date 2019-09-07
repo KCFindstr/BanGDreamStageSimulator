@@ -87,12 +87,12 @@
 </template>
 
 <script>
-import Data from '../Data';
-import Cache from '../Cache';
-import TrackEditor from '../Track';
+import Data from '../Helper/Data';
+import Cache from '../Helper/Cache';
+import TrackEditor from '../Helper/Track';
 import Vue from 'vue';
 import { saveAs } from 'file-saver';
-import removeAllSelection from '../RemoveSelection';
+import removeAllSelection from '../Helper/RemoveSelection';
 
 export default {
 	components: {

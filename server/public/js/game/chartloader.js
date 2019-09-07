@@ -42,7 +42,7 @@ export default function (chart) {
 		while (bpmpos < bpmlist.length && earlyThan(bpmlist[bpmpos].time, note)) {
 			// Update bpm
 			let cur = bpmlist[bpmpos];
-			time += timeDiff(bpmstart, cur.time, bpm);
+			time += timeDiff(cur.time, bpmstart, bpm);
 			bpm = cur.value;
 			bpmstart = cur.time;
 			bpmpos++;

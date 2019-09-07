@@ -89,11 +89,11 @@
 </template>
 
 <script>
-import Data from './Data';
-import Cache from './Cache';
-import TrackEditor from './Track';
+import Data from './Helper/Data';
+import Cache from './Helper/Cache';
+import TrackEditor from './Helper/Track';
 import { setInterval } from 'timers';
-import removeAllSelection from './RemoveSelection';
+import removeAllSelection from './Helper/RemoveSelection';
 
 function convertSecondsToTime(seconds) {
   let ret = '--:--';
@@ -157,12 +157,7 @@ export default {
       this.cache.music.pause();
     },
     changeTool: function(tool) {
-      if (tool == 3) {
-        for (let id in Cache.selectedNotes) {
-          TrackEditor.removeNote(id);
-        }
-      }
-      removeAllSelection();
+      removeAllSelection(tool == 3);
     }
   }
 };

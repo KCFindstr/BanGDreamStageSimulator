@@ -25,7 +25,8 @@ let obj = {
 		se: 0,
 		line: 0,
 		speed: 10,
-		scale: 1.5
+		scale: 1.5,
+		simuhint: 5
 	},
 	flickDistance: 1,
 	NOTE: {
@@ -60,10 +61,14 @@ if (window.BGDSS.development) {
 	setProperty('liveId', parseInt(cookie.get('liveId')), 1);
 }
 
-let userConfig = cookie.get('config');
-if (userConfig && userConfig.length) {
-	userConfig = JSON.parse(userConfig);
-	Object.assign(obj.noteStyle, userConfig);
+window.BGDSS.reloadConfig = () => {
+	let userConfig = cookie.get('config');
+	if (userConfig && userConfig.length) {
+		userConfig = JSON.parse(userConfig);
+		Object.assign(obj.noteStyle, userConfig);
+	}
 }
+
+window.BGDSS.reloadConfig();
 
 export default obj;

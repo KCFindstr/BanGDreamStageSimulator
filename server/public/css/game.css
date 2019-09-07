@@ -1,5 +1,6 @@
 #game-main {
-	height: 100%;
+	margin-top: 50px;
+	height: calc(100vh - 50px);
 	width: 100%;
 	background-color: black;
 	overflow: hidden;
@@ -8,13 +9,4 @@
 
 #game-main canvas {
 	box-shadow: 0 0 5px white;
-}
-
-html, body {
-  overflow-x: hidden;
-	touch-action: none;
-}
-body {
-  position: relative;
-	background-color: black;
 }

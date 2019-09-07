@@ -216,6 +216,8 @@ class TrackManager {
 			this.judge.update();
 		}
 		// Multi touch hint
+		if (!config.noteStyle.simuhint)
+			return;
 		let visible = {};
 		let timemap = {};
 		let addToMap = (t, x, y, id) => {
@@ -263,7 +265,7 @@ class TrackManager {
 			let line = this.lineMap[t];
 			let ratio = (y - tracky) / height;
 			line.setTo(minx, y, maxx, y);
-			line.setLineWidth(5 * config.noteStyle.scale * ratio);
+			line.setLineWidth(config.noteStyle.simuhint * config.noteStyle.scale * ratio);
 			line.ids = [minid, maxid];
 		}
 		for (let t in this.lineMap) {

@@ -30,14 +30,16 @@
 </template>
 
 <script>
-import Cache from './components/Cache';
-import Data from './components/Data';
+import Cache from './components/Helper/Cache';
+import Data from './components/Helper/Data';
 import LeftBar from './components/LeftBar';
 import MenuBar from './components/MenuBar';
 import Editor from './components/Editor';
 import { setInterval } from 'timers';
-import TrackEditor from './components/Track';
+import TrackEditor from './components/Helper/Track';
 import Vue from 'vue';
+import removeAllSelection from './components/Helper/RemoveSelection';
+import syncScrollbar from './components/Helper/SyncScrollbar';
 
 export default {
 	name: 'App',
@@ -55,7 +57,7 @@ export default {
 			Cache.gamePlaying = false;
 			Cache.music.seek(time / 1000);
 			Vue.nextTick(() => {
-				syncScrollBar(time / 1000);
+				syncScrollbar(time / 1000);
 			});
 		}
   }
@@ -63,33 +65,6 @@ export default {
 
 // sync
 let html = document.documentElement;
-let flick = new Howl({
-	src: '/se/flick.wav',
-	preload: true
-});
-let tap = new Howl({
-	src: '/se/perfect.wav',
-	preload: true
-});
-
-// sync scroll bar with time
-function syncScrollBar(musictime) {
-	let pos = musictime + Data.offset / 1000;
-	let timeline = Cache.timeline;
-	while (Cache.head < timeline.length && pos >= timeline[Cache.head].time) {
-		if (Data.editor.soundeffect) {
-			if (timeline[Cache.head].type == 1) {
-				flick.play();
-			} else {
-				tap.play();
-			}
-		}
-		Cache.head++;
-	}
-	let time = TrackEditor.getTimeBySeconds(pos);
-	Cache.targetPosition = html.scrollHeight - html.offsetHeight - time * Data.editor.rowheight;
-	html.scrollTop = Cache.targetPosition;
-}
 
 // sync music with scrollbar
 function syncMusic() {
@@ -106,12 +81,88 @@ function syncMusic() {
 setInterval(() => {
 	if (!Cache.music) return;
 	if (!Cache.music.playing()) return;
-	syncScrollBar(Cache.music.seek());
+	syncScrollbar(Cache.music.seek());
 }, 15)
 
-window.addEventListener('scroll', function(e) {
+window.addEventListener('scroll', function() {
 	if (!Cache.music || Math.abs(html.scrollTop - Cache.targetPosition) <= 1) return;
 	syncMusic();
+});
+
+// Key event listener
+function adjustTime(oritime, key) {
+	let div = Data.editor.division;
+	let time = [...oritime];
+	if (key == 0) {
+		for (let i = 0; i < div; i++) {
+			if (i * time[2] > time[1] * div) {
+				time[1] = i;
+				time[2] = div;
+				return time;
+			}
+		}
+		if (time[0] >= Data.editor.maxrow) {
+			return time;
+		}
+		time[0]++;
+		time[1] = 0;
+		time[2] = div;
+	} else {
+		for (let i = div - 1; i >= 0; i--) {
+			if (i * time[2] < time[1] * div) {
+				time[1] = i;
+				time[2] = div;
+				return time;
+			}
+		}
+		if (time[0] <= 1) {
+			return time;
+		}
+		time[0]--;
+		time[1] = div - 1;
+		time[2] = div;
+	}
+	return time;
+}
+
+function adjustTrack(note, prop, key) {
+	let res = note[prop] + (key == 2 ? -1: 1);
+	res = Math.max(0, Math.min(6, res));
+	note[prop] = res;
+}
+
+function pressedKey(event, key) {
+	let keys = Object.keys(Cache.selectedNotes);
+	if (keys.length == 0) return;
+	event.preventDefault();
+	for (let id of keys) {
+		let note = Cache.selectedNotes[id];
+		if (key < 2) {
+			note.time = adjustTime(note.time, key);
+			if (note.endtime) {
+				note.endtime = adjustTime(note.endtime, key);
+			}
+		} else {
+			adjustTrack(note, 'track', key);
+			if (note.endtrack != undefined) {
+				adjustTrack(note, 'endtrack', key);
+			}
+		}
+	}
+}
+
+function pressedDelete() {
+	removeAllSelection(true);
+}
+
+window.addEventListener('keydown', (event) => {
+	switch (event.key) {
+		case 'ArrowUp': pressedKey(event, 0); break;
+		case 'ArrowDown': pressedKey(event, 1); break;
+		case 'ArrowLeft': pressedKey(event, 2); break;
+		case 'ArrowRight': pressedKey(event, 3); break;
+		case 'Delete': pressedDelete(); break;
+	}
 });
 
 </script>

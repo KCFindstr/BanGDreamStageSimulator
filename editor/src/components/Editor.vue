@@ -21,8 +21,6 @@
 				}"
 				@click="handleNoteMouseDown(note)"
 				@contextmenu.prevent="removeNote(note)"
-				@dragover.prevent
-				@dragstart="dragNoteStart($event, note)"
 			>
 				<img :src="getFileByNoteType(note.type)"/>
 			</div>
@@ -70,12 +68,13 @@
 </template>
 
 <script>
-import Data from './Data';
-import Cache from './Cache';
+import Data from './Helper/Data';
+import Cache from './Helper/Cache';
 import colors from 'vuetify/lib/util/colors';
-import TrackEditor from './Track';
+import TrackEditor from './Helper/Track';
 import Vue from 'vue';
-import removeAllSelection from './RemoveSelection';
+import removeAllSelection from './Helper/RemoveSelection';
+import selectNote from './Helper/SelectNote';
 
 // concat hold notes
 function concatHoldNote(note, parent, pos) {
@@ -131,34 +130,6 @@ function concatHoldNote(note, parent, pos) {
 			time: note.time,
 			track: note.track,
 			type: 0,
-		}
-	}
-}
-
-// select a note
-function selectNote(note) {
-	if (Cache.noteHead) {
-		Cache.noteHead = null;
-	}
-	let noteList = [note];
-	let cur = note;
-	let map = Cache.noteMap;
-	// hold notes
-	while (cur.next) {
-		cur = map[cur.next];
-		noteList.push(cur);
-	}
-	cur = note;
-	while (cur.prev) {
-		cur = map[cur.prev];
-		noteList.push(cur);
-	}
-	// add / remove selection
-	for (cur of noteList) {
-		if (!Cache.selectedNotes[cur.id]) {
-			Vue.set(Cache.selectedNotes, cur.id, cur);
-		} else {
-			Vue.delete(Cache.selectedNotes, cur.id);
 		}
 	}
 }
@@ -279,10 +250,6 @@ export default {
 				TrackEditor.makeNote(note);
 				return;
 			}
-		},
-		// drag note event
-		dragNoteStart: function(event, note) {
-			console.log(event, note)
 		}
 	}
 };

@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import Data from './Data';
-import Cache from './Cache';
+import Data from './Helper/Data';
+import Cache from './Helper/Cache';
 import FileMenu from './Menu/File';
 import EditMenu from './Menu/Edit';
 import PlayMenu from './Menu/Play';
