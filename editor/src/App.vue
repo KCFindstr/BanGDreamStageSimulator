@@ -84,7 +84,9 @@ setInterval(() => {
 	if (!Cache.music || !Cache.music.playing()) {
 		return;
 	}
-	syncScrollbar(Cache.music.seek());
+	let time = Cache.music.seek();
+	if (typeof(time) == 'number' && !isNaN(time))
+		syncScrollbar(time);
 });
 
 $(window).scroll(function(e) {
