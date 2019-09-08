@@ -122,7 +122,9 @@ export default {
 		exportChart: function() {
 			this.menu = false;
 			this.exportdialog = true;
-			let blob = new Blob([JSON.stringify(Data)], {type: 'application/json'});
+			let chart = JSON.parse(JSON.stringify(Data));
+			chart.notes.sort((a, b) => TrackEditor.timeDiff(a.time, b.time, 60));
+			let blob = new Blob([JSON.stringify(chart)], {type: 'application/json'});
 			saveAs(blob, 'level.json');
 		},
 		importChartEnd: function() {

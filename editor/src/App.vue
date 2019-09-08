@@ -14,7 +14,7 @@
 			</v-btn>
 		</v-app-bar>
 
-		<template v-if="!cache.gamePlaying">
+		<div tabindex="0" v-if="!cache.gamePlaying" @keydown="keyDown">
 			<LeftBar v-if="cache.music"/>
 
 			<v-content v-if="cache.music">
@@ -22,7 +22,7 @@
 					<Editor/>
 				</v-container>
 			</v-content>
-		</template>
+		</div>
 		<template v-else>
 			<div id="game-main"></div>
 		</template>
@@ -40,6 +40,8 @@ import TrackEditor from './components/Helper/Track';
 import Vue from 'vue';
 import removeAllSelection from './components/Helper/RemoveSelection';
 import syncScrollbar from './components/Helper/SyncScrollbar';
+import PlayControl from './components/Helper/PlayControl';
+import KeyDownHandler from './components/Helper/KeyDownHandler';
 
 // sync
 let html = document.scrollingElement;
@@ -64,14 +66,14 @@ export default {
 			});
 		},
 		debug: function() {
-		}
+		},
+		keyDown: KeyDownHandler
   }
 };
 
 // sync music with scrollbar
 function syncMusic() {
-	Cache.music.pause();
-	Cache.playState = 1;
+	PlayControl(-1);
 	let pos = html.scrollHeight - $(window).outerHeight() - html.scrollTop;
 	pos /= Data.editor.rowheight;
 	pos += 1;
@@ -96,79 +98,9 @@ $(window).scroll(function(e) {
 	syncMusic();
 });
 
-// Key event listener
-function adjustTime(oritime, key) {
-	let div = Data.editor.division;
-	let time = [...oritime];
-	if (key == 0) {
-		for (let i = 0; i < div; i++) {
-			if (i * time[2] > time[1] * div) {
-				time[1] = i;
-				time[2] = div;
-				return time;
-			}
-		}
-		if (time[0] >= Data.editor.maxrow) {
-			return time;
-		}
-		time[0]++;
-		time[1] = 0;
-		time[2] = div;
-	} else {
-		for (let i = div - 1; i >= 0; i--) {
-			if (i * time[2] < time[1] * div) {
-				time[1] = i;
-				time[2] = div;
-				return time;
-			}
-		}
-		if (time[0] <= 1) {
-			return time;
-		}
-		time[0]--;
-		time[1] = div - 1;
-		time[2] = div;
-	}
-	return time;
-}
-
-function adjustTrack(note, prop, key) {
-	let res = note[prop] + (key == 2 ? -1: 1);
-	res = Math.max(0, Math.min(6, res));
-	note[prop] = res;
-}
-
-function pressedKey(event, key) {
-	let keys = Object.keys(Cache.selectedNotes);
-	if (keys.length == 0) return;
-	event.preventDefault();
-	for (let id of keys) {
-		let note = Cache.selectedNotes[id];
-		if (key < 2) {
-			note.time = adjustTime(note.time, key);
-			if (note.endtime) {
-				note.endtime = adjustTime(note.endtime, key);
-			}
-		} else {
-			adjustTrack(note, 'track', key);
-			if (note.endtrack != undefined) {
-				adjustTrack(note, 'endtrack', key);
-			}
-		}
-	}
-}
-
-function pressedDelete() {
-	removeAllSelection(true);
-}
-
-window.addEventListener('keydown', (event) => {
-	switch (event.key) {
-		case 'ArrowUp': pressedKey(event, 0); break;
-		case 'ArrowDown': pressedKey(event, 1); break;
-		case 'ArrowLeft': pressedKey(event, 2); break;
-		case 'ArrowRight': pressedKey(event, 3); break;
-		case 'Delete': pressedDelete(); break;
+window.addEventListener('keydown', (e) => {
+	if (e.target == document.body) {
+		KeyDownHandler(e);
 	}
 });
 

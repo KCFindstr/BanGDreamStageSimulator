@@ -16,6 +16,14 @@
     <link rel="shortcut icon" href="<%= BASE_URL %>img/favicon.png">
     <title>BGDSS Editor</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140457126-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-140457126-2');
+    </script>
     <!-- howler.js -->
     <script src="<%= BASE_URL %>js/lib/howler.min.js"></script>
     <!-- phaser.js -->
@@ -33,7 +41,7 @@
         development: true
       };
     </script>
-    <script type="module" src="<%= BASE_URL %>js/index.js"></script>
+    <script type="module" src="<%= BASE_URL %>js/index.js?1"></script>
     <!-- yconsole -->
     <!-- <script src="js/lib/yconsole.min.js"></script>
     <script type="text/javascript" >YConsole.show();</script> -->

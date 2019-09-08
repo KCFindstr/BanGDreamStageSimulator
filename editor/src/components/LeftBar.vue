@@ -94,6 +94,9 @@ import Cache from './Helper/Cache';
 import TrackEditor from './Helper/Track';
 import { setInterval } from 'timers';
 import removeAllSelection from './Helper/RemoveSelection';
+import ChangeTool from './Helper/ChangeTool';
+import PlayControl from './Helper/PlayControl';
+import KeyDownHandler from './Helper/KeyDownHandler';
 
 function convertSecondsToTime(seconds) {
   let ret = '--:--';
@@ -128,37 +131,13 @@ export default {
   }),
   methods: {
     musicPlay: function() {
-      if (this.cache.music.playing()) return;
-      let pos = this.cache.music.seek();
-      Cache.timeline = [];
-      Cache.head = 0;
-      let timeline = Cache.timeline;
-      for (let note of Data.notes) {
-        if (note.type == 2) {
-          let st = TrackEditor.getTimeInSeconds(note.time);
-          if (st >= pos) {
-            timeline.push({time: st, type: note.headtype});
-          }
-          st = TrackEditor.getTimeInSeconds(note.endtime);
-          if (note.tailtype != 2 && st >= pos) {
-            timeline.push({time: st, type: note.tailtype});
-          }
-        } else {
-          let st = TrackEditor.getTimeInSeconds(note.time);
-          if (st >= pos) {
-            timeline.push({time: st, type: note.type});
-          }
-        }
-      }
-      timeline.sort((a, b) => a.time - b.time);
-      this.cache.music.play();
+      PlayControl(1);
     },
     musicPause: function() {
-      this.cache.music.pause();
+      PlayControl(-1);
     },
-    changeTool: function(tool) {
-      removeAllSelection(tool == 3);
-    }
+    changeTool: ChangeTool,
+    keyDown: KeyDownHandler
   }
 };
 </script>

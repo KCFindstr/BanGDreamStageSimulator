@@ -95,7 +95,7 @@ export default {
 			this.gsdialog = true;
 		},
 		saveSettings: function() {
-			cookie.set("config", JSON.stringify(this.config));
+			cookie.set("config", JSON.stringify(this.config), { expires: 36500 });
 			this.gsdialog = false;
 		}
 	}

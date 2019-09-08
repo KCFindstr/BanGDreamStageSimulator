@@ -36,10 +36,10 @@ import Data from '../Helper/Data';
 import Cache from '../Helper/Cache';
 import Vue from 'vue';
 import GameSettings from './PlaySettings';
+import PlayControl from '../Helper/PlayControl';
 
 function startGameHelper() {
-	Cache.music.stop();
-	Cache.playState = 0;
+	PlayControl(-1);
 	Cache.gamePlaying = true;
 	window.BGDSS.chart = JSON.stringify(Data);
 	window.BGDSS.auto = Data.editor.auto;

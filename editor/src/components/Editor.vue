@@ -199,6 +199,10 @@ export default {
 			return TrackEditor.getEndNote(note);
 		},
 		removeNote: function(note) {
+			if (Cache.noteHead) {
+				Cache.noteHead = null;
+				return;
+			}
 			TrackEditor.removeNote(note.id);
 		},
 		handleNoteMouseDown: function(note, pos) {
