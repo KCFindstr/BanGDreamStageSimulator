@@ -20,8 +20,9 @@ app.get('/editor', (req, res) => {
 });
 
 // Lives
-app.get('/live/:id', (req, res) => {
-	res.cookie('liveId', req.params.id);
+app.get('/play/:songId/:liveId', (req, res) => {
+	res.cookie('liveId', req.params.liveId);
+	res.cookie('songId', req.params.songId);
 	res.render('game.ejs');
 });
 

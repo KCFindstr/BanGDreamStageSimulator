@@ -59,6 +59,7 @@ if (window.BGDSS.development) {
 	obj.liveId = -1;
 } else {
 	setProperty('liveId', parseInt(cookie.get('liveId')), 1);
+	setProperty('songId', parseInt(cookie.get('songId')), 1);
 }
 
 window.BGDSS.reloadConfig = () => {
