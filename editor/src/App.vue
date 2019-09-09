@@ -1,6 +1,6 @@
 <template>
 	<v-app>
-		<v-app-bar app dense clipped-left class="appbar" @click="debug()">
+		<v-app-bar @contextmenu.prevent app dense clipped-left class="appbar" @click="debug()">
 			<v-toolbar-title class="headline mr-3">
 				<span>BGDSS Editor</span>
 			</v-toolbar-title>
@@ -14,7 +14,7 @@
 			</v-btn>
 		</v-app-bar>
 
-		<div tabindex="0" v-if="!cache.gamePlaying" @keydown="keyDown">
+		<div @contextmenu.prevent tabindex="0" v-if="!cache.gamePlaying" @keydown="keyDown">
 			<LeftBar v-if="cache.music"/>
 
 			<v-content v-if="cache.music">
